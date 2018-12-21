@@ -1,0 +1,7 @@
+{
+  "name": "smartTravel",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
