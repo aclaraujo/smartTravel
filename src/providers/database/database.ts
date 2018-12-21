@@ -51,7 +51,7 @@ export class DatabaseProvider {
   private insertDefaultItems(db: SQLiteObject) {
     db.executeSql('select COUNT(id) as qtd from viagens', [])
       .then((data: any) => {
-        //Se não existe nenhum registro
+        //Se não existe nenhum registro criar
         if (data.rows.item(0).qtd == 0) {
 
           // Criando as tabelas
