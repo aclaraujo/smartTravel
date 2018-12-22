@@ -6,31 +6,32 @@
 -->
 <ion-header>
   <ion-navbar>
-    <button ion-button menuToggle>
+    <!-- <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
-    </button>
+    </button> -->
     <ion-title>Opções</ion-title>
   </ion-navbar>
 </ion-header>
 
 
 <ion-content padding>
-  <h3>Opções</h3>
-
   <ion-list>
+      <ion-list-header>
+          Selecione a viagem e o veículo
+      </ion-list-header>
     <ion-item>
+      <ion-icon name="calendar" item-start></ion-icon>
       <ion-label>Viagem</ion-label>
       <ion-select [(ngModel)]="viagem_sel" (ionChange)="saveViagem()">
         <ion-option *ngFor="let viagem of viagens" value="{{viagem.id}}">{{viagem.descricao}}</ion-option>
       </ion-select>
     </ion-item>
+    <ion-item>
+      <ion-icon name="bus" item-start></ion-icon>
+      <ion-label>Veiculo</ion-label>
+      <ion-select [(ngModel)]="veiculo_sel" (ionChange)="saveVeiculo()">
+        <ion-option *ngFor="let veiculo of veiculos" value="{{veiculo.id}}">{{veiculo.nome}}</ion-option>
+      </ion-select>
+    </ion-item>
   </ion-list>
-  <ion-list>
-      <ion-item>
-        <ion-label>Veiculo</ion-label>
-        <ion-select [(ngModel)]="veiculo_sel" (ionChange)="saveVeiculo()">
-          <ion-option *ngFor="let veiculo of veiculos" value="{{veiculo.id}}">{{veiculo.nome}}</ion-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
 </ion-content>

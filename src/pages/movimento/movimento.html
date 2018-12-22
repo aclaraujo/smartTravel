@@ -6,43 +6,66 @@
 -->
 <ion-header>
   <ion-navbar>
-    <button ion-button menuToggle>
+    <!-- <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
-    </button>
+    </button> -->
     <ion-title>Movimentaçao</ion-title>
   </ion-navbar>
 </ion-header>
 
 
 <ion-content padding>
-  <ion-item>
-    <ion-icon name="calendar" item-start></ion-icon>
-    {{viagem.descricao}}
-  </ion-item>
-  <ion-item>
+  <ion-list>
+    <ion-list-header>
+      Controle de paradas
+    </ion-list-header>
+    <ion-item>
+      <ion-icon name="calendar" item-start></ion-icon>
+      {{viagem.descricao}}
+    </ion-item>
+    <ion-item>
       <ion-icon name="bus" item-start></ion-icon>
       {{veiculo.nome}}
     </ion-item>
-  <button ion-button (click)="iniciar()" [disabled]="emParada">
-    Iniciar
-  </button>
-  <button ion-button (click)="encerrar()" [disabled]="!emParada">
-    Parar
-  </button>
-  <button ion-button (click)="openCaptura()" [disabled]="!emParada">
-    Capturar
-  </button>
-  <ion-item>
-    
-    Saída
-    <ion-badge item-end>{{global.QtdSaida}}</ion-badge>
-  </ion-item> 
-  <ion-item> 
-    Entrada
-    <ion-badge item-end>{{global.QtdEntrada}}</ion-badge>
-  </ion-item>
-  <ion-item> 
-    Restam
-    <ion-badge item-end>{{global.QtdRestante}}</ion-badge>
-  </ion-item>
+    <ion-item>
+      <ion-icon md="md-return-left" item-start></ion-icon>
+      Saída
+      <ion-badge item-end>{{global.QtdSaida}}</ion-badge>
+    </ion-item>
+    <ion-item>
+      <ion-icon md="md-exit" item-start></ion-icon>
+      Entrada
+      <ion-badge item-end>{{global.QtdEntrada}}</ion-badge>
+    </ion-item>
+    <ion-item>
+      <ion-icon md="md-checkbox-outline" item-start></ion-icon>
+      Restam
+      <ion-badge item-end>{{global.QtdRestante}}</ion-badge>
+    </ion-item>
+    <!-- <ion-item>
+      <button ion-button (click)="iniciar()" [disabled]="emParada">
+        Iniciar
+      </button>
+      <button ion-button (click)="encerrar()" [disabled]="!emParada">
+        Parar
+      </button>
+      <button ion-button (click)="openCaptura()" [disabled]="!emParada">
+        Capturar
+      </button>
+    </ion-item> -->
+  </ion-list>
+  <ion-fab bottom left>
+    <button ion-fab>
+      <ion-icon name="arrow-dropup"></ion-icon>
+    </button>
+    <ion-fab-list side="right">
+      <button ion-fab (click)="iniciar()" [disabled]="emParada"><ion-icon md="md-play"></ion-icon></button>
+      <button ion-fab (click)="encerrar()" [disabled]="!emParada"><ion-icon name="md-pause"></ion-icon></button>
+    </ion-fab-list>
+  </ion-fab>
+  <ion-fab bottom right>
+    <button ion-fab (click)="openCaptura()" [disabled]="!emParada">
+      <ion-icon name="md-barcode"></ion-icon>
+    </button>
+  </ion-fab>
 </ion-content>

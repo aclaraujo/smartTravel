@@ -1,3 +1,4 @@
+import { TabsPage } from './../pages/tabs/tabs';
 import { MovimentoPage } from './../pages/movimento/movimento';
 import { QRScanner } from '@ionic-native/qr-scanner';
 import { ConfigPage } from './../pages/config/config';
@@ -22,7 +23,8 @@ import { GlobalProvider } from '../providers/global/global';
     MyApp,
     HomePage,
     ConfigPage,    
-    MovimentoPage
+    MovimentoPage,
+    TabsPage
   ],
   imports: [
     BrowserModule,
@@ -37,7 +39,8 @@ import { GlobalProvider } from '../providers/global/global';
     MyApp,
     HomePage,
     ConfigPage,
-    MovimentoPage
+    MovimentoPage,
+    TabsPage
   ],
   providers: [
     StatusBar,

@@ -4,7 +4,7 @@ import { MovimentoPage } from './movimento';
 
 @NgModule({
   declarations: [
-    MovimentoPage
+    
   ],
   imports: [
     IonicPageModule.forChild(MovimentoPage),

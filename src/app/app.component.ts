@@ -1,3 +1,4 @@
+import { TabsPage } from './../pages/tabs/tabs';
 import { DatabaseProvider } from './../providers/database/database';
 import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
@@ -14,7 +15,7 @@ import { MovimentoPage } from '../pages/movimento/movimento';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = HomePage;
+  rootPage: any = TabsPage;
 
   pages: Array<{title: string, component: any}>;
 
@@ -38,11 +39,11 @@ export class MyApp {
       this.dbProvider.createDatabase()
         .then(() => {
           // fechando a SplashScreen somente quando o banco for criado
-          this.openHomePage();
+          //this.openHomePage();
         })
         .catch(() => {
           // ou se houver erro na criação do banco
-          this.openHomePage();
+          //this.openHomePage();
         });
       this.statusBar.styleDefault();
       this.splashScreen.hide();
