@@ -1,3 +1,5 @@
+import { GlobalProvider } from './../../providers/global/global';
+import { ORMProvider } from './../../providers/database/orm';
 import { ParadaProvider } from './../../providers/parada/parada';
 import { DatabaseProvider } from './../../providers/database/database';
 import { Component } from '@angular/core';
@@ -25,18 +27,20 @@ export class MovimentoPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, 
     private db: DatabaseProvider, private storage: Storage, 
     private modalController: ModalController, 
-    private paradaProvider: ParadaProvider) {
+    private paradaProvider: ParadaProvider,
+    private orm: ORMProvider, 
+    public global: GlobalProvider) {
   }
 
   ionViewDidLoad() {
     this.storage.get('id_viagem_sel').then((id:any) => {
-      this.db.getViagem(id).then((viagem:any)=> {
+      this.orm.getViagem(id).then((viagem:any)=> {
         this.viagem = viagem;
       })
     })
     
     this.storage.get('id_veiculo_sel').then((id:any) => {
-      this.db.getVeiculo(id).then((veiculo:any)=> {
+      this.orm.getVeiculo(id).then((veiculo:any)=> {
         this.veiculo = veiculo;
       })
     })

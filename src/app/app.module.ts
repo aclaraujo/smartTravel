@@ -14,6 +14,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { DatabaseProvider } from '../providers/database/database';
 import { IonicStorageModule } from '@ionic/storage';
 import { ParadaProvider } from '../providers/parada/parada';
+import { ORMProvider } from '../providers/database/orm';
+import { GlobalProvider } from '../providers/global/global';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { ParadaProvider } from '../providers/parada/parada';
     SQLite,
     DatabaseProvider,
     QRScanner,
-    ParadaProvider
+    ParadaProvider,
+    ORMProvider,
+    GlobalProvider
   ]
 })
 export class AppModule {}

@@ -1,7 +1,10 @@
+import { ORMProvider } from './../../providers/database/orm';
 import { Storage } from '@ionic/storage';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { DatabaseProvider } from '../../providers/database/database';
+import {createConnection, getConnection} from "ionic-orm";
+import {Viagem} from "../../entity/Viagem";
 
 /**
  * Generated class for the ConfigPage page.
@@ -27,7 +30,10 @@ export class ConfigPage {
     veiculo: 0
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private db: DatabaseProvider, private storage: Storage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, 
+    private db: DatabaseProvider, 
+    private storage: Storage, 
+    private ormProvider: ORMProvider) {
   }
 
   ionViewDidLoad() {
@@ -42,18 +48,16 @@ export class ConfigPage {
     });
   }
 
-  getAllViagens() {
-    this.db.getViagens()
-      .then((result: any[]) => {
-        this.viagens = result;     
-      });
+  async getAllViagens() {
+    this.ormProvider.listViagens().then(viagens => {
+      this.viagens = viagens;
+    })
   }
 
   getAllVeiculos() {
-    this.db.getVeiculos()
-      .then((result: any[]) => {
-        this.veiculos = result;     
-      });
+    this.ormProvider.listVeiculos().then(veiculos => {
+      this.veiculos = veiculos;
+    })
   }
 
   saveViagem() {

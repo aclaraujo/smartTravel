@@ -11,7 +11,9 @@
 </ion-header>
 
 <ion-content padding style="background: none transparent;">
-  <button ion-button (click)="closeModal()">
-    <ion-icon name="close">Parar</ion-icon>
-  </button>
+  <ion-fab right bottom>
+    <button ion-fab color="light" (click)="closeModal()">
+      <ion-icon name="close"></ion-icon>
+    </button>
+  </ion-fab>
 </ion-content>

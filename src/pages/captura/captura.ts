@@ -1,6 +1,9 @@
+import { GlobalProvider } from './../../providers/global/global';
+import { ORMProvider } from './../../providers/database/orm';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController, ToastController, AlertController } from 'ionic-angular';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
+import { Pessoa } from '../../entity/Pessoa';
 
 /**
  * Generated class for the CapturaPage page.
@@ -17,21 +20,23 @@ import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
 export class CapturaPage {
 
   private scanSub: any;
+  
 
   constructor(public navCtrl: NavController, 
     public navParams: NavParams, 
     private qrScanner: QRScanner, 
     public viewController: ViewController,
-    private toastCtrl: ToastController) {
+    private toastCtrl: ToastController,
+    private orm: ORMProvider,
+    private alertCtrl: AlertController,
+    private global: GlobalProvider) {
     
   }
 
   closeModal() {
     this.viewController.dismiss().then(() => {
       this.hideCamera();
-    });
-    //this.navCtrl.popToRoot();
-    
+    });    
   }
 
   ionViewWillEnter() {
@@ -60,9 +65,41 @@ export class CapturaPage {
 
   scanQR() {
     this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
-      this.presentToast(text);
-      //this.scanQR();
+      let dados = text.split(',');
+      let cpf = dados[4];      
+      this.orm.getPessoaPorCpf(cpf).then(value => {
+        let acao = "Registrando SAÍDA de ";
+        if (this.global.ListaSaida.has(cpf)) {
+          acao = "Registrando ENTRADA de ";
+          this.global.ListaSaida.delete(cpf);
+          this.global.entrada();
+        } else {
+          this.global.ListaSaida.set(cpf,value);
+          this.global.saida();
+        }
+        this.presentToast(acao+value.nome);        
+      }, reason => {
+        this.showAlerta(reason);
+      })      
     });
+  }
+
+  showAlerta(mensagem:string) {    
+    let alert = this.alertCtrl.create({
+      title: 'Atenção!',
+      subTitle: mensagem,
+      buttons: [{
+        text: 'Ok',
+        handler: () => {
+          let _dismmis = alert.dismiss();
+          _dismmis.then(()=>{
+            this.scanQR();
+          });
+          return false;
+        }
+      }]
+    });
+    alert.present();    
   }
 
   ionViewWillLeave() {
