@@ -1,6 +1,6 @@
 import {Table, Column, PrimaryGeneratedColumn} from "ionic-orm";
 
-@Table()
+@Table("viagem")
 export class Viagem {
 
     @PrimaryGeneratedColumn()

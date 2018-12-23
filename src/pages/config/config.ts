@@ -3,8 +3,6 @@ import { Storage } from '@ionic/storage';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { DatabaseProvider } from '../../providers/database/database';
-import {createConnection, getConnection} from "ionic-orm";
-import {Viagem} from "../../entity/Viagem";
 
 /**
  * Generated class for the ConfigPage page.
@@ -31,7 +29,6 @@ export class ConfigPage {
   }
 
   constructor(public navCtrl: NavController, public navParams: NavParams, 
-    private db: DatabaseProvider, 
     private storage: Storage, 
     private ormProvider: ORMProvider) {
   }
@@ -61,13 +58,13 @@ export class ConfigPage {
   }
 
   saveViagem() {
-    this.storage.set("id_viagem_sel", this.viagem_sel).then((value: any) =>{
+    this.storage.set("id_viagem_sel", this.viagem_sel).then(() =>{
       console.log('salvo');
     });
     
   }
   saveVeiculo() {
-    this.storage.set("id_veiculo_sel", this.veiculo_sel).then((value: any) =>{
+    this.storage.set("id_veiculo_sel", this.veiculo_sel).then(() =>{
       console.log('salvo');
     });
     

@@ -89,9 +89,9 @@ createConnection({
             let pessoa = new Pessoa();
             pessoa.nome = "ALBERTO MATHEUS MIRANDA DA SILVA";
             pessoa.cpf = "71158356404";
-            pessoa.nascimento = new Date("18/06/2004");
+            pessoa.nascimento = "18/06/2004";
             pessoa.rg = "3684210";
-            pessoa.rg_exp = "SSP/RN";
+            //pessoa.rg_exp = "SSP/RN";
             pessoa.status = 0;
             pessoa.unidade = "BETA";
 
@@ -100,9 +100,8 @@ createConnection({
             })
         }
     })
-
-    
-
-    console.log("Banco ceiado com sucesso")
-});
+    console.log("Banco conectado com sucesso.")
+}).catch(reason => {
+    console.log("Erro conectando ao banco ",reason);
+})
 

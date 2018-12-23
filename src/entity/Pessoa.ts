@@ -1,9 +1,11 @@
 import {Table, Column, PrimaryGeneratedColumn} from "ionic-orm";
 
-@Table()
+@Table('pessoa')
 export class Pessoa {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({
+        
+    })
     id: number;
 
     @Column()
@@ -13,7 +15,7 @@ export class Pessoa {
     cpf: string;
 
     @Column()
-    nascimento: Date;
+    nascimento: string;
 
     @Column()
     unidade: string;
@@ -21,7 +23,6 @@ export class Pessoa {
     @Column()
     rg: string;
 
-    @Column()
     rg_exp: string;
 
     @Column()

@@ -36,7 +36,7 @@ export class MyApp {
     this.platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      this.dbProvider.createDatabase()
+      /* this.dbProvider.createDatabase()
         .then(() => {
           // fechando a SplashScreen somente quando o banco for criado
           //this.openHomePage();
@@ -44,7 +44,7 @@ export class MyApp {
         .catch(() => {
           // ou se houver erro na criação do banco
           //this.openHomePage();
-        });
+        }); */
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
