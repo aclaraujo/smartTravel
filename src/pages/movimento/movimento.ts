@@ -1,10 +1,16 @@
+import { Veiculo } from './../../app/models/veiculo.interface';
+import { AngularFirestoreDocument } from 'angularfire2/firestore';
+import { Viagem } from './../../entity/Viagem';
+import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { GlobalProvider } from './../../providers/global/global';
 import { ORMProvider } from './../../providers/database/orm';
 import { ParadaProvider } from './../../providers/parada/parada';
 import { DatabaseProvider } from './../../providers/database/database';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicPage, NavController, NavParams, ModalController, DateTime } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
+import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 /**
  * Generated class for the MovimentoPage page.
@@ -20,8 +26,10 @@ import { Storage } from '@ionic/storage';
 })
 export class MovimentoPage {
 
-  viagem: any = [];
-  veiculo: any = [];
+  idViagem: string;
+  idVeiculo: string;
+  viagem;
+  veiculo;
   emParada: Boolean=false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, 
@@ -29,27 +37,25 @@ export class MovimentoPage {
     private modalController: ModalController, 
     private paradaProvider: ParadaProvider,
     private orm: ORMProvider, 
-    public global: GlobalProvider) {
+    public global: GlobalProvider, 
+    private firestore: FirestoreProvider) {
   }
 
-  ionViewDidLoad() {
-    this.storage.get('id_viagem_sel').then((id:any) => {
-      this.orm.getViagem(id).then((viagem:any)=> {
-        this.viagem = viagem;
-      })
+  ionViewDidEnter() {
+
+    this.storage.get('viagem').then((id:any) => {
+      this.idViagem = id; 
+      this.viagem = this.firestore.getViagem(id).valueChanges();
     })
     
-    this.storage.get('id_veiculo_sel').then((id:any) => {
-      this.orm.getVeiculo(id).then((veiculo:any)=> {
-        this.veiculo = veiculo;
-      })
+    this.storage.get('veiculo').then((id:any) => {
+      this.idVeiculo = id;
+      this.veiculo = this.firestore.getVeiculo(id).valueChanges();
     })
 
     this.paradaProvider.isEmParada().then((value:Boolean) => {
       this.emParada = value;
     })
-
-    console.log('ionViewDidLoad MovimentoPage');
   }
 
   openCaptura() {
@@ -59,7 +65,20 @@ export class MovimentoPage {
   }
 
   iniciar() {
-    this.paradaProvider.iniciarParada(new Date());
+    const endereco = "Local";
+    const inicio = new Date();
+    const idViagem = this.idViagem;
+    const idVeiculo = this.idVeiculo;
+    const parada = this.firestore.criarParada(
+      endereco,
+      inicio,
+      idViagem,
+      idVeiculo
+    ).then((value) =>{
+      console.log('Parada iniciada',value)
+    }).catch((erro) => {
+      console.log('Parada iniciado em modo offline')
+    })
     this.emParada = true;
   }
 

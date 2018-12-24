@@ -18,6 +18,12 @@ import { ParadaProvider } from '../providers/parada/parada';
 import { ORMProvider } from '../providers/database/orm';
 import { GlobalProvider } from '../providers/global/global';
 
+//Firestore
+import { AngularFireModule } from 'angularfire2';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { firebaseConfig } from './credentials';
+import { FirestoreProvider } from '../providers/firestore/firestore';
+
 @NgModule({
   declarations: [
     MyApp,
@@ -32,7 +38,9 @@ import { GlobalProvider } from '../providers/global/global';
     IonicStorageModule.forRoot({
       name: '__smartTraveldb',
       driverOrder: ['indexdb','sqlite','websql']
-    })
+    }),
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFirestoreModule.enablePersistence()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -51,7 +59,8 @@ import { GlobalProvider } from '../providers/global/global';
     QRScanner,
     ParadaProvider,
     ORMProvider,
-    GlobalProvider
+    GlobalProvider,
+    FirestoreProvider
   ]
 })
 export class AppModule {}

@@ -21,11 +21,11 @@
     </ion-list-header>
     <ion-item>
       <ion-icon name="calendar" item-start></ion-icon>
-      {{viagem.descricao}}
+      {{(viagem | async)?.descricao}}
     </ion-item>
     <ion-item>
       <ion-icon name="bus" item-start></ion-icon>
-      {{veiculo.nome}}
+      {{(veiculo | async)?.nome}}
     </ion-item>
     <ion-item>
       <ion-icon md="md-return-left" item-start></ion-icon>

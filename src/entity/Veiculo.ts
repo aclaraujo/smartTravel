@@ -1,9 +1,9 @@
 import {Table, Column, PrimaryGeneratedColumn} from "ionic-orm";
 
-@Table("veiculo")
+@Table()
 export class Veiculo {
 
-    @Column()
+    @PrimaryGeneratedColumn()
     id: number;
 
     @Column()

@@ -1,9 +1,10 @@
+import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { ORMProvider } from './../../providers/database/orm';
 import { Storage } from '@ionic/storage';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { DatabaseProvider } from '../../providers/database/database';
-
+import { Viagem } from '../../app/models/viagem.interface';
+import { Observable } from 'rxjs';
 /**
  * Generated class for the ConfigPage page.
  *
@@ -18,53 +19,45 @@ import { DatabaseProvider } from '../../providers/database/database';
 })
 export class ConfigPage {
 
-  viagens: any[] = [];
-  veiculos: any[] = [];
-  viagem_sel: any;
-  veiculo_sel: any;
-
-  selecao = {
-    viagem: [],
-    veiculo: 0
-  }
+  public viagens;
+  public veiculos;
+  viagem: any;
+  veiculo: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, 
     private storage: Storage, 
-    private ormProvider: ORMProvider) {
+    private firestore: FirestoreProvider) {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ConfigPage');
     this.getAllViagens();
     this.getAllVeiculos();
-    this.storage.get("id_viagem_sel").then((value:any) => {
-      this.viagem_sel = value;
+    this.storage.get("viagem").then((value:any) => {
+      console.log('Viagem selecionada ', value);
+      this.viagem = value;
     });
-    this.storage.get("id_veiculo_sel").then((value:any) => {
-      this.veiculo_sel = value;
+    this.storage.get("veiculo").then((value:any) => {
+      console.log('Veiculo selecionado ', value);
+      this.veiculo = value;
     });
   }
 
   async getAllViagens() {
-    this.ormProvider.listViagens().then(viagens => {
-      this.viagens = viagens;
-    })
+    this.viagens = this.firestore.listViagens();
   }
 
-  getAllVeiculos() {
-    this.ormProvider.listVeiculos().then(veiculos => {
-      this.veiculos = veiculos;
-    })
+  async getAllVeiculos() {
+    this.veiculos = this.firestore.listVeiculos();
   }
 
   saveViagem() {
-    this.storage.set("id_viagem_sel", this.viagem_sel).then(() =>{
+    this.storage.set("viagem", this.viagem).then(() =>{
       console.log('salvo');
     });
     
   }
   saveVeiculo() {
-    this.storage.set("id_veiculo_sel", this.veiculo_sel).then(() =>{
+    this.storage.set("veiculo", this.veiculo).then(() =>{
       console.log('salvo');
     });
     
