@@ -11,6 +11,7 @@ import { IonicPage, NavController, NavParams, ModalController, DateTime } from '
 import { Storage } from '@ionic/storage';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { firestore } from 'firebase';
 
 /**
  * Generated class for the MovimentoPage page.
@@ -30,7 +31,6 @@ export class MovimentoPage {
   idVeiculo: string;
   viagem;
   veiculo;
-  emParada: Boolean=false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, 
     private db: DatabaseProvider, private storage: Storage, 
@@ -53,9 +53,6 @@ export class MovimentoPage {
       this.veiculo = this.firestore.getVeiculo(id).valueChanges();
     })
 
-    this.paradaProvider.isEmParada().then((value:Boolean) => {
-      this.emParada = value;
-    })
   }
 
   openCaptura() {
@@ -77,20 +74,16 @@ export class MovimentoPage {
     ).then((value) =>{
       console.log('Parada iniciada',value)
     }).catch((erro) => {
-      console.log('Parada iniciado em modo offline')
+      console.log('Parada iniciada em modo offline')
     })
-    this.emParada = true;
   }
 
   encerrar() {
-    this.paradaProvider.encerrarParada();
-    this.emParada = false;
+    this.firestore.encerrarParada();
   }
 
-  isEmParada() {
-    return this.paradaProvider.isEmParada().then((result:Boolean) => {
-      return result;
-    })
+  get emParada() {
+    return this.firestore.isEmParada();
   }
 
 }

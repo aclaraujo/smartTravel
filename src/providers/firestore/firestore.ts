@@ -23,12 +23,13 @@ export class FirestoreProvider {
 
   viagens: AngularFirestoreCollection<Viagem>;
   veiculos: AngularFirestoreCollection<Veiculo>;
-  paradasAtivas: AngularFirestoreCollection<Parada>;
+  paradas: AngularFirestoreCollection<Parada>;
+  paradaAtual: Parada;
 
   constructor(private store: AngularFirestore) {
     this.viagens = this.store.collection<Viagem>('viagens');
     this.veiculos = this.store.collection<Veiculo>('veiculos');
-    this.paradasAtivas = this.store.collection<Parada>('paradasAtivas');
+    this.paradas = this.store.collection<Parada>('paradas');
   }
 
   listViagens() {
@@ -56,14 +57,28 @@ export class FirestoreProvider {
     inicio: Date,
     idViagem: string,
     idVeiculo: string
-  ): Promise<DocumentReference> {
+  ): Promise<void> {
     const id = this.store.createId();
     const parada = {
+      id,
       endereco,
+      inicio,
       idVeiculo,
-      idViagem
+      idViagem,
+      ativa: true
     } as Parada;
-    return this.paradasAtivas.add(parada);
+    this.paradaAtual = parada;
+    return this.paradas.doc<Parada>(id).set(parada);
+  }
+
+  encerrarParada() {
+    this.paradaAtual.ativa = false;
+    this.paradaAtual.termino = new Date();
+    this.paradas.doc(this.paradaAtual.id).update(this.paradaAtual);
+  }
+
+  isEmParada() {
+    return this.paradaAtual!=undefined?this.paradaAtual.ativa:false;
   }
 
 }

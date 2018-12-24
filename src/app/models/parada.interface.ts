@@ -7,8 +7,10 @@ export class Parada {
     inicio: Date;
     termino: Date;
     coord: firebase.firestore.GeoPoint;
-    ativa: boolean
+    ativa: boolean;
     idViagem: string;
     idVeiculo: string;
+    qtdEntrada: number;
+    qtdSaida: number;
 
 }
