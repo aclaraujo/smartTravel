@@ -1,9 +1,10 @@
+import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { GlobalProvider } from './../../providers/global/global';
 import { ORMProvider } from './../../providers/database/orm';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, ToastController, AlertController } from 'ionic-angular';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
-import { Pessoa } from '../../entity/Pessoa';
+import { Pessoa, StatusPessoa } from "../../app/models/pessoa.interface";
 
 /**
  * Generated class for the CapturaPage page.
@@ -20,7 +21,6 @@ import { Pessoa } from '../../entity/Pessoa';
 export class CapturaPage {
 
   private scanSub: any;
-  
 
   constructor(public navCtrl: NavController, 
     public navParams: NavParams, 
@@ -29,7 +29,8 @@ export class CapturaPage {
     private toastCtrl: ToastController,
     private orm: ORMProvider,
     private alertCtrl: AlertController,
-    private global: GlobalProvider) {
+    private global: GlobalProvider,
+    private fireStore: FirestoreProvider) {
     
   }
 
@@ -65,19 +66,15 @@ export class CapturaPage {
 
   scanQR() {
     this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
-      let dados = text.split(',');
-      let cpf = dados[4];      
-      this.orm.getPessoaPorCpf(cpf).then(value => {
+      this.fireStore.findPessoaByQRCode(text).then(pessoa => {
         let acao = "Registrando SAÍDA de ";
-        if (this.global.ListaSaida.has(cpf)) {
+        if (pessoa.status==StatusPessoa.Desembarque) {
           acao = "Registrando ENTRADA de ";
-          this.global.ListaSaida.delete(cpf);
-          this.global.entrada();
+          this.fireStore.incEntrada(pessoa.id);
         } else {
-          this.global.ListaSaida.set(cpf,value);
-          this.global.saida();
+          this.fireStore.incSaida(pessoa.id);
         }
-        this.presentToast(acao+value.nome);        
+        this.presentToast(acao+pessoa.nome);        
       }, reason => {
         this.showAlerta(reason);
       })      

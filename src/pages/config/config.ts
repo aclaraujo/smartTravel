@@ -1,3 +1,4 @@
+import { GlobalProvider } from './../../providers/global/global';
 import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { ORMProvider } from './../../providers/database/orm';
 import { Storage } from '@ionic/storage';
@@ -25,21 +26,13 @@ export class ConfigPage {
   veiculo: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, 
-    private storage: Storage, 
+    private global: GlobalProvider, 
     private firestore: FirestoreProvider) {
   }
 
   ionViewDidLoad() {
     this.getAllViagens();
     this.getAllVeiculos();
-    this.storage.get("viagem").then((value:any) => {
-      console.log('Viagem selecionada ', value);
-      this.viagem = value;
-    });
-    this.storage.get("veiculo").then((value:any) => {
-      console.log('Veiculo selecionado ', value);
-      this.veiculo = value;
-    });
   }
 
   async getAllViagens() {
@@ -51,15 +44,9 @@ export class ConfigPage {
   }
 
   saveViagem() {
-    this.storage.set("viagem", this.viagem).then(() =>{
-      console.log('salvo');
-    });
-    
+    this.global.Viagem = this.viagem;
   }
   saveVeiculo() {
-    this.storage.set("veiculo", this.veiculo).then(() =>{
-      console.log('salvo');
-    });
-    
+    this.global.Veiculo = this.veiculo;
   }
 }
