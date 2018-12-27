@@ -49,7 +49,7 @@ export class MovimentoPage {
   }
 
   get emParada() {
-    return this.firestore.isEmParada();
+    return this.global.Veiculo.paradaAtual?true:false;
   }
 
 }

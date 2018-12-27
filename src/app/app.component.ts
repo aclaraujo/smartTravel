@@ -13,6 +13,7 @@ import { MovimentoPage } from '../pages/movimento/movimento';
 import { map } from 'rxjs/operators/map';
 import { Storage } from '@ionic/storage';
 import { Viagem } from './models/viagem.interface';
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Component({
   templateUrl: 'app.html'
@@ -71,10 +72,6 @@ export class MyApp {
       if (veiculo){
         this.db.getVeiculo(veiculo.id).then(obj=>{
           this.global.Veiculo = obj;
-          if (obj.paradaAtual.length>0)
-          this.db.getParada(obj.paradaAtual).then(obj=>{
-            this.global.Parada = obj;
-          })
         });
       }
     });

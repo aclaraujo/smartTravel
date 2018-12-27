@@ -26,23 +26,31 @@ export class FirestoreProvider {
   }
 
   toVeiculo(doc) {
+    console.log('Convertendo de',doc)
     var v = new Veiculo();
     v = doc.data();
     v.id = doc.id;
     const paradaAtual = doc.get('paradaAtual')
-    v.paradaAtual = paradaAtual ? paradaAtual.path : '';
+    if (paradaAtual) {
+      paradaAtual.get().then(obj=>{
+        v.paradaAtual = this.toParada(obj);
+      })
+    }
+    console.log('Convertido para veiculo',v)
     return v;
   }
 
   toViagem(doc) {
     console.log('Convertendo para viagem',doc)
     var v = new Viagem();
-    v = doc.data();
+    v.descricao = doc.get('descricao');
+    v.inicio = doc.get('inicio');
+    v.termino = doc.get('termino');
     v.id = doc.id;
     return v;
   }
 
-  toParada(doc) {
+  toParada(doc):Parada {
     var p = new Parada();
     p = doc.data();
     p.id = doc.id;
@@ -138,7 +146,7 @@ export class FirestoreProvider {
     //
   }
 
-  public getParadaAtual(veiculo: Veiculo): Observable<Parada> {
+  /* public getParadaAtual(veiculo: Veiculo): Observable<Parada> {
     return this.db.doc<Parada>(veiculo.paradaAtual).snapshotChanges()
       .pipe(map(doc => {
         return doc.payload;
@@ -147,7 +155,7 @@ export class FirestoreProvider {
         parada.id = obj.id;
         return parada;
       }))
-  }
+  } */
 
   criarParada(
     endereco: string
@@ -178,29 +186,27 @@ export class FirestoreProvider {
     console.log('Iniciando encerramento da parada')
     const angDoc = this.db.doc<Veiculo>(`veiculos/${this.global.Veiculo.id}`);
     angDoc.get().toPromise().then((result) => {
-      const pathParada = result.get('paradaAtual');
+      const pathParada = result.get('paradaAtual').path;
       console.log('Encerrando a parada do veiculo', result.data)
       this.db.doc(pathParada).update({ termino: new Date(), ativa: false })
-      angDoc.update({ paradaAtual: "", emParada: false })
+      angDoc.update({ paradaAtual: null, emParada: false })
       console.log('Parada encerrada', pathParada)
-      this.global.Parada = null;
+      this.global.Veiculo.paradaAtual = null;
     }).catch(erro => {
       console.error('Erro encerrando a parada', erro)
     })
   }
 
-  isEmParada(): boolean {
-    return this.global.Parada ? this.global.Parada.ativa : false;
-  }
-
   incSaida(pessoaId: string) {
-    this.global.Parada.qtdSaida++;
-    this.setQtdSaida(this.global.Parada.qtdSaida, this.global.Parada.id);
+    this.global.Veiculo.paradaAtual.qtdSaida++;
+    this.setQtdSaida(this.global.Veiculo.paradaAtual.qtdSaida, this.global.Veiculo.paradaAtual.id);
+    this.pessoas.doc(pessoaId).update({status: StatusPessoa.Desembarque})
   }
 
   incEntrada(pessoaId: string) {
-    this.global.Parada.qtdEntrada++;
-    this.setQtdEntrada(this.global.Parada.qtdEntrada, this.global.Parada.id);
+    this.global.Veiculo.paradaAtual.qtdEntrada++;
+    this.setQtdEntrada(this.global.Veiculo.paradaAtual.qtdEntrada, this.global.Veiculo.paradaAtual.id);
+    this.pessoas.doc(pessoaId).update({status: StatusPessoa.Embarque})
   }
 
   private setQtdEntrada(qtd: number, id: string) {
