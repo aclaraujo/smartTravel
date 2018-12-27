@@ -1,6 +1,5 @@
 import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { GlobalProvider } from './../../providers/global/global';
-import { ORMProvider } from './../../providers/database/orm';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, ToastController, AlertController } from 'ionic-angular';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
@@ -27,7 +26,6 @@ export class CapturaPage {
     private qrScanner: QRScanner, 
     public viewController: ViewController,
     private toastCtrl: ToastController,
-    private orm: ORMProvider,
     private alertCtrl: AlertController,
     private global: GlobalProvider,
     private fireStore: FirestoreProvider) {

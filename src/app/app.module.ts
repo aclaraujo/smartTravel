@@ -12,10 +12,7 @@ import { SQLite } from '@ionic-native/sqlite';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { DatabaseProvider } from '../providers/database/database';
 import { IonicStorageModule } from '@ionic/storage';
-import { ParadaProvider } from '../providers/parada/parada';
-import { ORMProvider } from '../providers/database/orm';
 import { GlobalProvider } from '../providers/global/global';
 
 //Firestore
@@ -55,10 +52,7 @@ import { FirestoreProvider } from '../providers/firestore/firestore';
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     SQLite,
-    DatabaseProvider,
     QRScanner,
-    ParadaProvider,
-    ORMProvider,
     GlobalProvider,
     FirestoreProvider
   ]

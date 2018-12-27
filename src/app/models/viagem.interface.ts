@@ -4,4 +4,5 @@ export class Viagem {
     descricao: string;
     inicio: Date;
     termino: Date
+
 }

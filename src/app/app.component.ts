@@ -1,5 +1,7 @@
+import { Veiculo } from './../entity/Veiculo';
+import { GlobalProvider } from './../providers/global/global';
+import { FirestoreProvider } from './../providers/firestore/firestore';
 import { TabsPage } from './../pages/tabs/tabs';
-import { DatabaseProvider } from './../providers/database/database';
 import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -8,6 +10,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { HomePage } from '../pages/home/home';
 import { ConfigPage } from '../pages/config/config';
 import { MovimentoPage } from '../pages/movimento/movimento';
+import { map } from 'rxjs/operators/map';
+import { Storage } from '@ionic/storage';
+import { Viagem } from './models/viagem.interface';
 
 @Component({
   templateUrl: 'app.html'
@@ -20,7 +25,10 @@ export class MyApp {
   pages: Array<{title: string, component: any}>;
 
   constructor(public platform: Platform, public statusBar: StatusBar, 
-    public splashScreen: SplashScreen, public dbProvider: DatabaseProvider) {
+    public splashScreen: SplashScreen,
+    private db: FirestoreProvider,
+    private localStorage: Storage,
+    private global: GlobalProvider) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
@@ -36,16 +44,8 @@ export class MyApp {
     this.platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      /* this.dbProvider.createDatabase()
-        .then(() => {
-          // fechando a SplashScreen somente quando o banco for criado
-          //this.openHomePage();
-        })
-        .catch(() => {
-          // ou se houver erro na criação do banco
-          //this.openHomePage();
-        }); */
       this.statusBar.styleDefault();
+      this.iniciaVariaveisGlobais();
       this.splashScreen.hide();
     });
   }
@@ -55,9 +55,44 @@ export class MyApp {
     this.splashScreen.hide();
     this.openPage(this.pages[0]);
   }
+  
   openPage(page) {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
     this.nav.setRoot(page.component);
   }
+
+  iniciaVariaveisGlobais() {
+
+    var veiculo;
+    this.localStorage.get('veiculo').then((value:Veiculo)=>{
+      console.log('Obtendo veiculo do store local',value)
+      veiculo = value;
+      if (veiculo){
+        this.db.getVeiculo(veiculo.id).then(obj=>{
+          this.global.Veiculo = obj;
+          if (obj.paradaAtual.length>0)
+          this.db.getParada(obj.paradaAtual).then(obj=>{
+            this.global.Parada = obj;
+          })
+        });
+      }
+    });
+
+    var viagem:Viagem;
+    this.localStorage.get('viagem').then((value:Viagem)=>{
+      console.log('Obtendo viagem do store local',value)
+      viagem = value;
+      if (viagem) {
+        console.log('Obtendo viagem do firebasel',viagem)
+        this.db.getViagem(viagem.id).then(obj=>{
+          this.global.Viagem = obj;
+        })
+      }
+    })
+    
+
+    console.log('Variaveis globais setadas')
+  }
+
 }

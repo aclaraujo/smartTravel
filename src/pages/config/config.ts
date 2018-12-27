@@ -1,11 +1,11 @@
+import { Veiculo } from './../../app/models/veiculo.interface';
+import { Viagem } from './../../app/models/viagem.interface';
 import { GlobalProvider } from './../../providers/global/global';
 import { FirestoreProvider } from './../../providers/firestore/firestore';
-import { ORMProvider } from './../../providers/database/orm';
-import { Storage } from '@ionic/storage';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { Viagem } from '../../app/models/viagem.interface';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators/map';
 /**
  * Generated class for the ConfigPage page.
  *
@@ -20,19 +20,21 @@ import { Observable } from 'rxjs';
 })
 export class ConfigPage {
 
-  public viagens;
-  public veiculos;
-  viagem: any;
-  veiculo: any;
+  public viagens: Observable<Viagem[]>;
+  public veiculos: Observable<Veiculo[]>;
+  public viagem = new Viagem();
+  public veiculo = new Veiculo();
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, 
-    private global: GlobalProvider, 
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+    private global: GlobalProvider,
     private firestore: FirestoreProvider) {
   }
 
   ionViewDidLoad() {
     this.getAllViagens();
     this.getAllVeiculos();
+    this.viagem = this.global.Viagem;
+    this.veiculo = this.global.Veiculo;
   }
 
   async getAllViagens() {
@@ -46,7 +48,12 @@ export class ConfigPage {
   saveViagem() {
     this.global.Viagem = this.viagem;
   }
+
   saveVeiculo() {
     this.global.Veiculo = this.veiculo;
+  }
+
+  public compare(a:any, b:any) {
+    return a && b ? a.id === b.id : a === b;
   }
 }

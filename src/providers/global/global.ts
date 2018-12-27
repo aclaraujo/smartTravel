@@ -1,3 +1,4 @@
+import { Parada } from './../../app/models/parada.interface';
 import { Viagem } from './../../app/models/viagem.interface';
 import { Veiculo } from './../../app/models/veiculo.interface';
 import { Pessoa } from './../../app/models/pessoa.interface';
@@ -16,15 +17,16 @@ export class GlobalProvider {
   private qtdEntrada: number = 0;
   private qtdSaida: number = 0;
   private listaSaida: Map<string, Pessoa> = new Map();
-  private veiculo: string;
-  private viagem: string;
+  private veiculo: Veiculo;
+  private viagem: Viagem;
+  private parada: Parada;
 
   constructor(private localStore: Storage) {
     console.log('Hello GlobalProvider Provider');
-    this.localStore.get('veiculo').then((veiculo:any) => {
+    /* this.localStore.get('veiculo').then((veiculo:any) => {
       this.veiculo = veiculo;
       console.log('Veiculo atual',veiculo)
-    })
+    }) */
   }
 
   entrada() {    
@@ -62,28 +64,32 @@ export class GlobalProvider {
   }
 
   
-  public get Veiculo() : string {
+  public get Veiculo() : Veiculo {
     return this.veiculo;
   }
 
-  public set Veiculo(v : string) {
+  public set Veiculo(v : Veiculo) {
+    console.log('Set veiculo',v)
+    this.localStore.set('veiculo',v);
     this.veiculo = v;
-    this.localStore.set("veiculo", this.veiculo).then(() =>{
-      console.log('salvo');
-    });
   }
   
-  public get Viagem() : string {
+  public get Viagem() : Viagem {
     return this.viagem;
   }
 
-  public set Viagem(v : string) {
+  public set Viagem(v : Viagem) {
+    console.log('Set viagem',v);
+    this.localStore.set('viagem',v);
     this.viagem = v;
-    this.localStore.set("viagem", this).then(() =>{
-      console.log('salvo');
-    });
   }
-  
-  
 
+  public get Parada() : Parada {
+    return this.parada;
+  }
+
+  public set Parada(p : Parada) {
+    console.log('Set viagem',p);
+    this.parada = p;
+  }
 }
