@@ -28,7 +28,9 @@ export class FirestoreProvider {
   toVeiculo(doc) {
     console.log('Convertendo de',doc)
     var v = new Veiculo();
-    v = doc.data();
+    v.nome = doc.get('nome');
+    v.placa = doc.get('placa')
+    v.emParada = doc.get('emParada')
     v.id = doc.id;
     const paradaAtual = doc.get('paradaAtual')
     if (paradaAtual) {
@@ -87,8 +89,8 @@ export class FirestoreProvider {
     return viagens;
   }
 
-  listVeiculos() {
-    let veiculos = this.veiculos.snapshotChanges()
+  async listVeiculos() {
+    let veiculos = await this.veiculos.snapshotChanges()
       .pipe(map(actions => actions.map<Veiculo>(doc=>{
         return this.toVeiculo(doc.payload.doc);
       })));
@@ -157,7 +159,7 @@ export class FirestoreProvider {
       }))
   } */
 
-  criarParada(
+  async criarParada(
     endereco: string
   ): Promise<Parada> {
     let p = new Parada();
@@ -167,17 +169,22 @@ export class FirestoreProvider {
     p.ativa = true;
     p.idVeiculo = this.global.Veiculo.id;
     p.idViagem = this.global.Viagem.id;
-    this.global.Parada = p;
+    p.qtdEntrada = 0;
+    p.qtdSaida = 0;
     return new Promise<Parada>((resolve, reject) => {
       this.paradas.doc(p.id).set(Object.assign({}, p));
       console.log('Inserindo a parada', p)
       const docRef = this.db.doc(`paradas/${p.id}`).ref;
       console.log('Obtendo a referência', docRef)
       this.db.doc(`veiculos/${this.global.Veiculo.id}`)
-        .update({ paradaAtual: docRef, emParada: true }).catch(erro => {
+        .update({ paradaAtual: docRef, emParada: true }).then(value=>{
+          console.log('Veiculo atualizado com as informações da parada',value)
+        })
+        .catch(erro => {
           console.log(erro)
           reject(erro)
         })
+      this.global.Veiculo.paradaAtual = p;
       resolve(p)
     })
   }
@@ -210,10 +217,12 @@ export class FirestoreProvider {
   }
 
   private setQtdEntrada(qtd: number, id: string) {
+    console.log('Ajustando qtdEntrada',qtd)
     this.paradas.doc(id).update({ qtdEntrada: qtd });
   }
 
   private setQtdSaida(qtd: number, id: string) {
+    console.log('Ajustando qtdSaida',qtd)
     this.paradas.doc(id).update({ qtdSaida: qtd });
   }
 

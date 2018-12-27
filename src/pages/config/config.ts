@@ -38,11 +38,11 @@ export class ConfigPage {
   }
 
   async getAllViagens() {
-    this.viagens = this.firestore.listViagens();
+    this.viagens = await this.firestore.listViagens();
   }
 
   async getAllVeiculos() {
-    this.veiculos = this.firestore.listVeiculos();
+    this.veiculos = await this.firestore.listVeiculos();
   }
 
   saveViagem() {

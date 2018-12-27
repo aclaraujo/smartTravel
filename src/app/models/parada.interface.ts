@@ -10,7 +10,7 @@ export class Parada {
     ativa: boolean;
     idViagem: string;
     idVeiculo: string;
-    qtdEntrada: number;
-    qtdSaida: number;
+    qtdEntrada: number = 0;
+    qtdSaida: number = 0;
 
 }

@@ -38,15 +38,18 @@ export class GlobalProvider {
   }
 
   get QtdEntrada():number {
-    return this.qtdEntrada;
+    return this.veiculo.paradaAtual?this.veiculo.paradaAtual.qtdEntrada:0;
   }
 
   get QtdSaida():number {
-    return this.qtdSaida;
+    return this.veiculo.paradaAtual?this.veiculo.paradaAtual.qtdSaida:0;
   }
 
   get QtdRestante():number {
-    return this.qtdSaida - this.qtdEntrada;
+    if (this.veiculo.paradaAtual) {
+      return this.veiculo.paradaAtual.qtdSaida - this.veiculo.paradaAtual.qtdEntrada
+    }
+    return 0;
   }
 
   incEntrada() {

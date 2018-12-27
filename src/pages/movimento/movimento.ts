@@ -40,8 +40,8 @@ export class MovimentoPage {
     this.navCtrl.push('CapturaPage');
   }
 
-  iniciar() {
-    this.firestore.criarParada("Local 1");
+  async iniciar() {
+    await this.firestore.criarParada("Local 1");
   }
 
   encerrar() {
