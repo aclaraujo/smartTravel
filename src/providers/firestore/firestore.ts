@@ -113,6 +113,13 @@ export class FirestoreProvider {
       return pessoas;
   }
 
+  listPessoasPorVeiculoStatus(veiculo:string,status:string) {
+    return this.db.collection<Pessoa>('pessoas', ref => {
+      let query = ref.where('onibus','==',veiculo)
+      return query.where('status','==',status);
+    }).valueChanges();
+  }
+
   getViagem(id: string) {
     return this.viagens.doc(id).ref.get().then(doc=>{
       return this.toViagem(doc)

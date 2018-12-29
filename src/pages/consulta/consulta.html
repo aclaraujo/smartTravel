@@ -45,10 +45,22 @@
     </ion-list>
 
     <ion-list *ngSwitchCase="'detalhe'">
+      <ion-item>
+        <ion-label stacked>Veiculo</ion-label>
+        <ion-select [(ngModel)]="veiculoSel" (ionChange)="atualizar()">
+          <ion-option *ngFor="let veiculo of veiculos | async" [value]="veiculo.id">{{veiculo.nome}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+          <ion-label stacked>Status</ion-label>
+          <ion-select [(ngModel)]="statusSel" (ionChange)="atualizar()">
+            <ion-option *ngFor="let opcao of opcoes" [value]="opcao.value">{{opcao.text}}</ion-option>
+          </ion-select>
+        </ion-item>
       <ion-item *ngFor="let pessoa of pessoas | async">
-          <ion-icon md="md-checkbox-outline" item-start *ngIf="pessoa.status==1" ></ion-icon>
-          <h2>{{pessoa.nome}}</h2>
-          <p>{{pessoa.unidade}}</p>
+        <ion-icon md="md-checkbox-outline" item-start *ngIf="pessoa.status==1"></ion-icon>
+        <h2>{{pessoa.nome}}</h2>
+        <p>{{pessoa.unidade}}</p>
       </ion-item>
     </ion-list>
   </div>
