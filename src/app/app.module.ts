@@ -1,9 +1,12 @@
+import { ModalComponent } from './../pages/captura/modal.component';
+import { ConsultaPage } from './../pages/consulta/consulta';
+import { FirestoreProvider } from './../providers/firestore/firestore';
 import { TabsPage } from './../pages/tabs/tabs';
 import { MovimentoPage } from './../pages/movimento/movimento';
 import { QRScanner } from '@ionic-native/qr-scanner';
 import { ConfigPage } from './../pages/config/config';
 import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule, APP_INITIALIZER } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
@@ -12,14 +15,13 @@ import { SQLite } from '@ionic-native/sqlite';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { IonicStorageModule } from '@ionic/storage';
 import { GlobalProvider } from '../providers/global/global';
 
 //Firestore
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { firebaseConfig } from './credentials';
-import { FirestoreProvider } from '../providers/firestore/firestore';
+import { IonicStorageModule } from '@ionic/storage';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { FirestoreProvider } from '../providers/firestore/firestore';
     HomePage,
     ConfigPage,    
     MovimentoPage,
-    TabsPage
+    TabsPage,
+    ConsultaPage,
+    ModalComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +49,9 @@ import { FirestoreProvider } from '../providers/firestore/firestore';
     HomePage,
     ConfigPage,
     MovimentoPage,
-    TabsPage
+    TabsPage,
+    ConsultaPage,
+    ModalComponent
   ],
   providers: [
     StatusBar,
@@ -54,7 +60,12 @@ import { FirestoreProvider } from '../providers/firestore/firestore';
     SQLite,
     QRScanner,
     GlobalProvider,
-    FirestoreProvider
+    FirestoreProvider,
+    { provide: APP_INITIALIZER, useFactory: firestoreProviderFactory, deps: [FirestoreProvider], multi: true }
   ]
 })
 export class AppModule {}
+
+export function firestoreProviderFactory(provider: FirestoreProvider) {
+  return () => provider.load();
+}

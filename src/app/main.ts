@@ -3,4 +3,4 @@ import { AppModule } from './app.module';
 
 import "reflect-metadata";
 
-platformBrowserDynamic().bootstrapModule(AppModule); 
+platformBrowserDynamic().bootstrapModule(AppModule);

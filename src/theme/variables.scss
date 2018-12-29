@@ -22,7 +22,7 @@ $app-direction: ltr;
 // To view all the possible Ionic variables, see:
 // http://ionicframework.com/docs/theming/overriding-ionic-variables/
 
-ion-app.cameraView, ion-app.cameraView ion-content, ion-app.cameraView .nav-decor {
+ion-app.cameraView, ion-app.cameraView ion-content .nav-decor {
   background: transparent url("../assets/imgs/capture.png") !important;
   background-size: 100% 100% !important;
   //background-image: url("../assets/imgs/capture.png") !important;

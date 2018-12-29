@@ -1,3 +1,18 @@
 page-captura {
+   
+}
+.toast-message {
+    white-space: pre-line;
+  }
+  
+.modal-component {
+    height: 270px;
+    position: absolute;
+    top: calc(100% - 270px);
 
+    ion-content {
+        background-color: #333;
+        color: #eee;
+        text-align: center
+    }
 }

@@ -1,8 +1,7 @@
-import { Veiculo } from './../../entity/Veiculo';
 import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { GlobalProvider } from './../../providers/global/global';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, AlertController } from 'ionic-angular';
 
 /**
  * Generated class for the MovimentoPage page.
@@ -24,14 +23,15 @@ export class MovimentoPage {
   veiculo;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public global: GlobalProvider, 
-    private firestore: FirestoreProvider) {
+    public global: GlobalProvider,
+    private firestore: FirestoreProvider,
+    private alertCtrl: AlertController) {
   }
 
   ionViewDidEnter() {
     this.viagem = this.global.Viagem;
     this.veiculo = this.global.Veiculo;
-    console.log('Entrou na pagina',this.veiculo, this.viagem)
+    console.log('Entrou na pagina', this.veiculo, this.viagem)
   }
 
   openCaptura() {
@@ -45,11 +45,34 @@ export class MovimentoPage {
   }
 
   encerrar() {
-    this.firestore.encerrarParada();
+    let confirm = this.alertCtrl.create({
+      title: 'Confirmar encerramento',
+      message: 'Ainda restam passageiros a embarcar. Deseja encerrar mesmo assim?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Confirmar',
+          handler: () => {
+            this.firestore.encerrarParada();
+          }
+        }
+      ]
+    })
+
+    if (this.global.QtdRestante>0) {
+      confirm.present();
+    } else {
+      this.firestore.encerrarParada();
+    }
   }
 
   get emParada() {
-    return this.global.Veiculo.paradaAtual?true:false;
+    return this.global.Veiculo.paradaAtual ? true : false;
   }
 
 }

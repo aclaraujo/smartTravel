@@ -21,14 +21,14 @@
       </ion-list-header>
     <ion-item>
       <ion-icon name="calendar" item-start></ion-icon>
-      <ion-label>Viagem</ion-label>
+      <ion-label stacked>Viagem</ion-label>
       <ion-select [(ngModel)]="viagem" (ionChange)="saveViagem()" [compareWith]="compare">
         <ion-option *ngFor="let viagem of viagens | async" [value]="viagem">{{viagem.descricao}}</ion-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-icon name="bus" item-start></ion-icon>
-      <ion-label>Veiculo</ion-label>
+      <ion-label stacked>Veiculo</ion-label>
       <ion-select [(ngModel)]="veiculo" (ionChange)="saveVeiculo()" [compareWith]="compare">
         <ion-option *ngFor="let veiculo of veiculos | async" [value]="veiculo">{{veiculo.nome}}</ion-option>
       </ion-select>

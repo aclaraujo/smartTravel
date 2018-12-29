@@ -9,6 +9,7 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument 
 import { map } from 'rxjs/operators/map';
 import { Viagem } from '../../app/models/viagem.interface';
 import { Observable } from 'rxjs/Observable';
+import { Storage } from '@ionic/storage';
 
 /*
   Generated class for the FirestoreProvider provider.
@@ -59,14 +60,16 @@ export class FirestoreProvider {
     return p;
   }
 
-  toPessoa(obj: any) {
-    let p: Pessoa;
-    p.nome = obj.get('nome');
-    p.nascimento = obj.get('nascimento');
-    p.onibus = obj.get('onibus');
-    p.qrcode = obj.get('qrcode');
-    p.rg = obj.get('rg');
-    p.unidade = obj.get('unidade');
+  toPessoa(doc):Pessoa {
+    console.log('Convertendo para pessoa',doc)
+    let p = new Pessoa();
+    p.nome = doc.get('nome');
+    p.nascimento = doc.get('nascimento');
+    p.onibus = doc.get('onibus');
+    p.qrcode = doc.get('qrcode');
+    p.rg = doc.get('rg');
+    p.unidade = doc.get('unidade');
+    p.status = doc.get('status');
     return p;
   }
 
@@ -76,15 +79,20 @@ export class FirestoreProvider {
   pessoas: AngularFirestoreCollection<Pessoa>;
 
   constructor(private db: AngularFirestore,
-    private global: GlobalProvider) {
+    private global: GlobalProvider,
+    private localStorage: Storage) {
     this.viagens = this.db.collection<Viagem>('viagens');
+    this.viagens.get();
     this.veiculos = this.db.collection<Veiculo>('veiculos');
+    this.veiculos.get();
     this.paradas = this.db.collection<Parada>('paradas');
+    this.paradas.get();
     this.pessoas = this.db.collection<Pessoa>('pessoas');
+    this.pessoas.get();
   }
 
-  listViagens() {
-    let viagens = this.viagens.snapshotChanges()
+  async listViagens() {
+    let viagens = await this.viagens.snapshotChanges()
       .pipe(map(actions => actions.map<Viagem>(this.listDocumentToDomainObject)));
     return viagens;
   }
@@ -95,6 +103,14 @@ export class FirestoreProvider {
         return this.toVeiculo(doc.payload.doc);
       })));
       return veiculos;
+  }
+
+  async listPessoas() {
+    let pessoas = await this.pessoas.snapshotChanges()
+      .pipe(map(actions => actions.map<Pessoa>(doc=>{
+        return this.toPessoa(doc.payload.doc);
+      })));
+      return pessoas;
   }
 
   getViagem(id: string) {
@@ -228,6 +244,40 @@ export class FirestoreProvider {
 
   private setStatusPessoa(pessoaId: string, status: StatusPessoa) {
     this.pessoas.doc(pessoaId).update({ status: status })
+  }
+
+  public load() {
+    return new Promise((resolve, reject)=>{
+      this.carregaVeiculo().then(()=>{
+        this.carregaViagem().then(()=>{
+          resolve(true)
+        })
+      });
+    })
+  }
+
+  private carregaVeiculo() {
+    return this.localStorage.get('veiculoId').then((veiculoId:string)=>{
+      console.log('Obtendo veiculo do store local',veiculoId)
+      if (veiculoId){
+        return this.getVeiculo(veiculoId).then(veiculo=>{
+          this.global.Veiculo = veiculo;
+          console.log('Obtendo veiculo do firebase',veiculo)
+        });
+      }
+    });
+  }
+
+  private carregaViagem() {
+    return this.localStorage.get('viagemId').then((viagemId:string)=>{
+      console.log('Obtendo viagem do store local',viagemId)
+      if (viagemId) {
+        return this.getViagem(viagemId).then(viagem=>{
+          this.global.Viagem = viagem;
+          console.log('Obtendo viagem do firebase',viagem)
+        })
+      }
+    })
   }
 
 }

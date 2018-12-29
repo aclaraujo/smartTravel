@@ -23,10 +23,6 @@ export class GlobalProvider {
 
   constructor(private localStore: Storage) {
     console.log('Hello GlobalProvider Provider');
-    /* this.localStore.get('veiculo').then((veiculo:any) => {
-      this.veiculo = veiculo;
-      console.log('Veiculo atual',veiculo)
-    }) */
   }
 
   entrada() {    
@@ -73,7 +69,7 @@ export class GlobalProvider {
 
   public set Veiculo(v : Veiculo) {
     console.log('Set veiculo',v)
-    this.localStore.set('veiculo',v);
+    this.localStore.set('veiculoId',v.id);
     this.veiculo = v;
   }
   
@@ -83,16 +79,7 @@ export class GlobalProvider {
 
   public set Viagem(v : Viagem) {
     console.log('Set viagem',v);
-    this.localStore.set('viagem',v);
+    this.localStore.set('viagemId',v.id);
     this.viagem = v;
-  }
-
-  public get Parada() : Parada {
-    return this.parada;
-  }
-
-  public set Parada(p : Parada) {
-    console.log('Set viagem',p);
-    this.parada = p;
   }
 }

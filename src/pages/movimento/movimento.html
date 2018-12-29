@@ -9,16 +9,16 @@
     <!-- <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button> -->
-    <ion-title>Movimentaçao</ion-title>
+    <ion-title>Movimentação</ion-title>
   </ion-navbar>
 </ion-header>
 
 
 <ion-content padding>
   <ion-list>
-    <ion-list-header>
+    <!-- <ion-list-header>
       Controle de paradas
-    </ion-list-header>
+    </ion-list-header> -->
     <ion-item>
       <ion-icon name="calendar" item-start></ion-icon>
       {{global.Viagem.descricao}}
@@ -26,6 +26,22 @@
     <ion-item>
       <ion-icon name="bus" item-start></ion-icon>
       {{global.Veiculo.nome}}
+    </ion-item>
+    <ion-item>
+      <ion-grid>
+        <ion-row>
+          <button ion-button (click)="iniciar()" [disabled]="emParada" icon-end block>
+            Iniciar
+            <ion-icon md="md-play">
+            </ion-icon>
+          </button>
+          <button ion-button (click)="encerrar()" color="danger" [disabled]="!emParada" icon-end block>
+            Encerrar
+            <ion-icon name="md-pause">
+            </ion-icon>
+          </button>
+        </ion-row>
+      </ion-grid>
     </ion-item>
     <ion-item>
       <ion-icon md="md-return-left" item-start></ion-icon>
@@ -54,21 +70,8 @@
       </button>
     </ion-item> -->
   </ion-list>
-  <ion-grid>
-    <ion-row>
-      <ion-col col-12>
-        <button ion-button (click)="iniciar()" [disabled]="emParada">
-          <ion-icon md="md-play">
-          </ion-icon>
-        </button>
-        <button ion-button (click)="encerrar()" [disabled]="!emParada">
-          <ion-icon name="md-pause">
-          </ion-icon>
-        </button>
-      </ion-col>
-     </ion-row>
-  </ion-grid>
-  <ion-fab bottom right>
+
+  <ion-fab bottom center>
     <button ion-fab (click)="openCaptura()" [disabled]="!emParada">
       <ion-icon name="md-barcode"></ion-icon>
     </button>

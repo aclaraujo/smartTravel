@@ -1,9 +1,10 @@
 import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { GlobalProvider } from './../../providers/global/global';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController, ToastController, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController, ToastController, AlertController, ModalController } from 'ionic-angular';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
 import { Pessoa, StatusPessoa } from "../../app/models/pessoa.interface";
+import { ModalComponent } from './modal.component';
 
 /**
  * Generated class for the CapturaPage page.
@@ -21,21 +22,24 @@ export class CapturaPage {
 
   private scanSub: any;
 
-  constructor(public navCtrl: NavController, 
-    public navParams: NavParams, 
-    private qrScanner: QRScanner, 
+  public opcao: number;
+
+  constructor(public navCtrl: NavController,
+    public navParams: NavParams,
+    private qrScanner: QRScanner,
     public viewController: ViewController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private global: GlobalProvider,
-    private fireStore: FirestoreProvider) {
-    
+    public global: GlobalProvider,
+    private fireStore: FirestoreProvider,
+    private modalCtrl: ModalController, ) {
+
   }
 
   closeModal() {
     this.viewController.dismiss().then(() => {
       this.hideCamera();
-    });    
+    });
   }
 
   ionViewWillEnter() {
@@ -59,27 +63,53 @@ export class CapturaPage {
           // permission was denied, but not permanently. You can ask for permission again at a later time.
         }
       })
-      .catch((e: any) => console.log('Error is', e));      
+      .catch((e: any) => console.log('Error is', e));
   }
 
   scanQR() {
     this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
       this.fireStore.findPessoaByQRCode(text).then(pessoa => {
-        let acao = "Registrando SAÍDA de ";
-        if (pessoa.status==StatusPessoa.Desembarque) {
-          acao = "Registrando ENTRADA de ";
-          this.fireStore.incEntrada(pessoa.id);
-        } else {
-          this.fireStore.incSaida(pessoa.id);
+
+        if (pessoa.onibus == this.global.Veiculo.id) {
+
+          if (this.opcao == Opcao.Embarque) {
+            if (pessoa.status == StatusPessoa.Ausente || pessoa.status == StatusPessoa.Desembarque) {
+              this.fireStore.incEntrada(pessoa.id);
+              this.presentToast('Embarque', pessoa)
+            } else {
+              this.showAlerta(`EMBARQUE já realizado.`);
+            }
+          } else if (this.opcao == Opcao.Desembarque) {
+            if (pessoa.status == StatusPessoa.Ausente || pessoa.status == StatusPessoa.Embarque) {
+              this.fireStore.incSaida(pessoa.id);
+              this.presentToast('Desembarque', pessoa);
+            } else {
+              this.showAlerta(`DESEMBARQUE já realizado.`);
+            }
+          }
+          else {
+            this.showAlerta('Escolha uma opção. (EMBARQUE/DESEMBARQUE')
+          }
         }
-        this.presentToast(acao+pessoa.nome);        
+        else {
+          this.showAlerta(`O embarque/desembarque deve ser feito no ônibus <h3>${pessoa.onibus}</h3>`);
+        }
       }, reason => {
         this.showAlerta(reason);
-      })      
+      })
     });
   }
 
-  showAlerta(mensagem:string) {    
+  showToastEntrada(pessoa: Pessoa) {
+    let modal = this.modalCtrl.create(ModalComponent, { passageiro: pessoa.nome })
+    modal.present();
+  }
+
+  showToastSaida(pessoa: Pessoa) {
+
+  }
+
+  showAlerta(mensagem: string) {
     let alert = this.alertCtrl.create({
       title: 'Atenção!',
       subTitle: mensagem,
@@ -87,20 +117,20 @@ export class CapturaPage {
         text: 'Ok',
         handler: () => {
           let _dismmis = alert.dismiss();
-          _dismmis.then(()=>{
+          _dismmis.then(() => {
             this.scanQR();
           });
           return false;
         }
       }]
     });
-    alert.present();    
+    alert.present();
   }
 
   ionViewWillLeave() {
     this.qrScanner.hide(); // hide camera preview
     this.scanSub.unsubscribe(); // stop scanning
-    this.hideCamera();    
+    this.hideCamera();
   }
 
   showCamera() {
@@ -109,13 +139,14 @@ export class CapturaPage {
 
   hideCamera() {
     (window.document.querySelector('ion-app') as HTMLElement).classList.remove('cameraView');
-  }  
+  }
 
-  presentToast(text:string) {
+  presentToast(opcao:string, p: Pessoa) {
     let toast = this.toastCtrl.create({
-      message: text,
+      message: `${opcao} registrado para: \n${p.nome} \nUnidade: ${p.unidade}`,
       duration: 3000,
-      position: 'middle'
+      position: 'middle',
+      dismissOnPageChange: true
     });
 
     toast.onDidDismiss(() => {
@@ -126,4 +157,9 @@ export class CapturaPage {
     toast.present();
   }
 
+}
+
+export enum Opcao {
+  Embarque = 0,
+  Desembarque = 1
 }

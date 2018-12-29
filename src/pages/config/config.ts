@@ -3,7 +3,7 @@ import { Viagem } from './../../app/models/viagem.interface';
 import { GlobalProvider } from './../../providers/global/global';
 import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators/map';
 /**
@@ -27,14 +27,23 @@ export class ConfigPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     private global: GlobalProvider,
-    private firestore: FirestoreProvider) {
+    private firestore: FirestoreProvider,
+    private loadingCtrl: LoadingController) {
+    console.log('ConfigPage criado')
+    let loading = loadingCtrl.create({
+      content: 'Aguarde...',
+      duration: 2000
+    })
+    loading.present();
+    this.viagem = this.global.Viagem;
+    this.veiculo = this.global.Veiculo;
+    this.getAllViagens();
+    this.getAllVeiculos();
+    loading.dismiss();
   }
 
   ionViewDidLoad() {
-    this.getAllViagens();
-    this.getAllVeiculos();
-    this.viagem = this.global.Viagem;
-    this.veiculo = this.global.Veiculo;
+
   }
 
   async getAllViagens() {
@@ -53,7 +62,7 @@ export class ConfigPage {
     this.global.Veiculo = this.veiculo;
   }
 
-  public compare(a:any, b:any) {
+  public compare(a: any, b: any) {
     return a && b ? a.id === b.id : a === b;
   }
 }

@@ -11,9 +11,21 @@
 </ion-header>
 
 <ion-content padding style="background: none transparent;">
-  <ion-fab right bottom>
+  <ion-list radio-group [(ngModel)]="opcao">
+    <ion-item>
+      <ion-label>Embarque</ion-label>
+      <ion-radio value="0" item-start></ion-radio>
+      <ion-badge item-end>{{global.QtdEntrada}}</ion-badge>
+    </ion-item>
+    <ion-item>
+      <ion-label>Desembarque</ion-label>
+      <ion-radio value="1" item-start></ion-radio>
+      <ion-badge item-end>{{global.QtdSaida}}</ion-badge>
+    </ion-item>
+  </ion-list>
+  <ion-fab center bottom>
     <button ion-fab color="light" (click)="closeModal()">
       <ion-icon name="close"></ion-icon>
     </button>
   </ion-fab>
-</ion-content>
+  </ion-content>
