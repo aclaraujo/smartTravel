@@ -1,7 +1,12 @@
 <ion-content padding>
     <ion-grid>
-        <ion-row>
-            <h3>{{passageiro}}</h3>
+        <ion-row align-items-center>
+            <ion-col>
+                <ion-icon md="md-exit" style="zoom:2.0;" *ngIf="embarque"></ion-icon>
+                <ion-icon md="md-return-left" style="zoom:2.0;" *ngIf="desembarque"></ion-icon>
+                <h2>{{passageiro.nome}}</h2>
+                {{passageiro.unidade}}
+            </ion-col>
         </ion-row>
     </ion-grid>
 </ion-content>

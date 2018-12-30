@@ -75,14 +75,16 @@ export class CapturaPage {
           if (this.opcao == Opcao.Embarque) {
             if (pessoa.status == StatusPessoa.Ausente || pessoa.status == StatusPessoa.Desembarque) {
               this.fireStore.incEntrada(pessoa.id);
-              this.presentToast('Embarque', pessoa)
+              pessoa.status = StatusPessoa.Embarque;
+              this.showToast(pessoa);
             } else {
               this.showAlerta(`EMBARQUE já realizado.`);
             }
           } else if (this.opcao == Opcao.Desembarque) {
             if (pessoa.status == StatusPessoa.Ausente || pessoa.status == StatusPessoa.Embarque) {
               this.fireStore.incSaida(pessoa.id);
-              this.presentToast('Desembarque', pessoa);
+              pessoa.status = StatusPessoa.Desembarque;
+              this.showToast(pessoa);
             } else {
               this.showAlerta(`DESEMBARQUE já realizado.`);
             }
@@ -100,9 +102,18 @@ export class CapturaPage {
     });
   }
 
-  showToastEntrada(pessoa: Pessoa) {
-    let modal = this.modalCtrl.create(ModalComponent, { passageiro: pessoa.nome })
-    modal.present();
+  showToast(pessoa: Pessoa) {
+    let modal = this.modalCtrl.create(ModalComponent, { passageiro: pessoa })
+      modal.present();
+
+    modal.onDidDismiss(()=>{
+      this.scanQR();
+    })
+
+    setTimeout (()=>{
+      modal.dismiss();
+    },3000);
+    
   }
 
   showToastSaida(pessoa: Pessoa) {

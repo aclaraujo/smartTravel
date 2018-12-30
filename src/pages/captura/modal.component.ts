@@ -1,3 +1,4 @@
+import { StatusPessoa } from './../../app/models/pessoa.interface';
 import { ViewController, NavParams } from 'ionic-angular';
 import { Component } from "@angular/core";
 
@@ -7,13 +8,17 @@ import { Component } from "@angular/core";
   })
   export class ModalComponent {
 
-    public passageiro: string;
+    public passageiro;
+    public embarque:boolean = false;
+    public desembarque: boolean = false;
 
     constructor(private viewCtrl: ViewController,
         private params:NavParams) {
             
         this.passageiro = params.get('passageiro')
-
+        
+        this.embarque = this.passageiro.status == StatusPessoa.Embarque;
+        this.desembarque = this.passageiro.status == StatusPessoa.Desembarque;
     }
 
     dismiss() {
