@@ -6,6 +6,7 @@ import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-an
 import { Veiculo } from '../../app/models/veiculo.interface';
 import { Pessoa } from '../../app/models/pessoa.interface';
 import { map } from 'rxjs/operators';
+import { Opcao } from '../captura/captura';
 
 /**
  * Generated class for the ConsultaPage page.

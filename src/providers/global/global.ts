@@ -43,7 +43,8 @@ export class GlobalProvider {
 
   get QtdRestante():number {
     if (this.veiculo.paradaAtual) {
-      return this.veiculo.paradaAtual.qtdSaida - this.veiculo.paradaAtual.qtdEntrada
+      const restante = this.veiculo.paradaAtual.qtdSaida - this.veiculo.paradaAtual.qtdEntrada
+      return restante<0?0:restante;
     }
     return 0;
   }

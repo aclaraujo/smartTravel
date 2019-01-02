@@ -31,7 +31,6 @@ import { IonicStorageModule } from '@ionic/storage';
     ConfigPage,    
     MovimentoPage,
     TabsPage,
-    ConsultaPage,
     ModalComponent,
     DetalheModal
   ],
