@@ -1,6 +1,6 @@
 import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { GlobalProvider } from './../../providers/global/global';
-import { Component } from '@angular/core';
+import { Component, ɵConsole } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, ToastController, AlertController, ModalController } from 'ionic-angular';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
 import { Pessoa, StatusPessoa } from "../../app/models/pessoa.interface";
@@ -68,7 +68,10 @@ export class CapturaPage {
 
   scanQR() {
     this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
-      this.fireStore.findPessoaByQRCode(text).then(pessoa => {
+      const nome = text.split(';')[0]
+      console.log("qrcode",text)
+
+      this.fireStore.findPessoaByNome(nome).then(pessoa => {
 
         if (pessoa.onibus == this.global.Veiculo.id) {
 

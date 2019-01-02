@@ -10,59 +10,36 @@
     <ion-title>Consulta</ion-title>
 
   </ion-navbar>
-</ion-header>
-
-
-<ion-content padding>
-  <ion-segment [(ngModel)]="visao">
+  <!-- <ion-segment [(ngModel)]="visao">
     <ion-segment-button value="geral">
       Geral
     </ion-segment-button>
     <ion-segment-button value="detalhe">
       Detalhe
     </ion-segment-button>
-  </ion-segment>
+  </ion-segment> -->
+</ion-header>
+
+
+<ion-content padding>
+
   <ion-list>
-
+    <ion-item *ngFor="let veiculo of veiculos | async">
+      <ion-icon name="bus" item-start></ion-icon>
+      <h2>{{veiculo.nome}}</h2>
+      <div *ngIf="veiculo.paradaAtual">
+        <p>A embarcar
+          <ion-badge item-end>{{veiculo.paradaAtual.qtdSaida-veiculo.paradaAtual.qtdEntrada}}</ion-badge>
+        </p>
+      </div>
+      <div *ngIf="!veiculo.paradaAtual">
+        <p>Em viagem</p>
+      </div>
+      <button ion-button outline item-end small icon-start (click)="showDetalhe(veiculo)">
+        <ion-icon name="people"></ion-icon>
+        Ver
+      </button>
+    </ion-item>
   </ion-list>
-  <div [ngSwitch]="visao">
-    <ion-list *ngSwitchCase="'geral'">
-      <ion-item *ngFor="let veiculo of veiculos | async">
-        <ion-icon name="bus" item-start></ion-icon>
-        <h2>{{veiculo.nome}}</h2>
-        <div *ngIf="veiculo.paradaAtual">
-          <p>Restando embarcar</p>
-          <ion-badge>{{veiculo.paradaAtual.qtdSaida-veiculo.paradaAtual.qtdEntrada}}</ion-badge>
-        </div>
-        <div *ngIf="!veiculo.paradaAtual">
-          <p>Em viagem</p>
-        </div>
-        <button ion-button outline item-end small icon-start>
-          <ion-icon name="people"></ion-icon>
-          Ver
-        </button>
-      </ion-item>
-    </ion-list>
-
-    <ion-list *ngSwitchCase="'detalhe'">
-      <ion-item>
-        <ion-label stacked>Veiculo</ion-label>
-        <ion-select [(ngModel)]="veiculoSel" (ionChange)="atualizar()">
-          <ion-option *ngFor="let veiculo of veiculos | async" [value]="veiculo.id">{{veiculo.nome}}</ion-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-          <ion-label stacked>Status</ion-label>
-          <ion-select [(ngModel)]="statusSel" (ionChange)="atualizar()">
-            <ion-option *ngFor="let opcao of opcoes" [value]="opcao.value">{{opcao.text}}</ion-option>
-          </ion-select>
-        </ion-item>
-      <ion-item *ngFor="let pessoa of pessoas | async">
-        <ion-icon md="md-checkbox-outline" item-start *ngIf="pessoa.status==1"></ion-icon>
-        <h2>{{pessoa.nome}}</h2>
-        <p>{{pessoa.unidade}}</p>
-      </ion-item>
-    </ion-list>
-  </div>
 
 </ion-content>

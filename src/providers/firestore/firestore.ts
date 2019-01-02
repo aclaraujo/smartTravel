@@ -1,3 +1,4 @@
+import { Coordinates } from '@ionic-native/geolocation';
 import { firestore } from 'firebase';
 import { GlobalProvider } from './../global/global';
 
@@ -27,7 +28,7 @@ export class FirestoreProvider {
   }
 
   toVeiculo(doc) {
-    console.log('Convertendo de',doc)
+    console.log('Convertendo de', doc)
     var v = new Veiculo();
     v.nome = doc.get('nome');
     v.placa = doc.get('placa')
@@ -35,16 +36,16 @@ export class FirestoreProvider {
     v.id = doc.id;
     const paradaAtual = doc.get('paradaAtual')
     if (paradaAtual) {
-      paradaAtual.get().then(obj=>{
+      paradaAtual.get().then(obj => {
         v.paradaAtual = this.toParada(obj);
       })
     }
-    console.log('Convertido para veiculo',v)
+    console.log('Convertido para veiculo', v)
     return v;
   }
 
   toViagem(doc) {
-    console.log('Convertendo para viagem',doc)
+    console.log('Convertendo para viagem', doc)
     var v = new Viagem();
     v.descricao = doc.get('descricao');
     v.inicio = doc.get('inicio');
@@ -53,16 +54,17 @@ export class FirestoreProvider {
     return v;
   }
 
-  toParada(doc):Parada {
+  toParada(doc): Parada {
     var p = new Parada();
     p = doc.data();
     p.id = doc.id;
     return p;
   }
 
-  toPessoa(doc):Pessoa {
-    console.log('Convertendo para pessoa',doc)
+  toPessoa(doc): Pessoa {
+    console.log('Convertendo para pessoa', doc)
     let p = new Pessoa();
+    p.id = doc.id;
     p.nome = doc.get('nome');
     p.nascimento = doc.get('nascimento');
     p.onibus = doc.get('onibus');
@@ -75,7 +77,7 @@ export class FirestoreProvider {
 
   viagens: AngularFirestoreCollection<Viagem>;
   veiculos: AngularFirestoreCollection<Veiculo>;
-  paradas: AngularFirestoreCollection<Parada>;
+  //paradas: AngularFirestoreCollection<Parada>;
   pessoas: AngularFirestoreCollection<Pessoa>;
 
   constructor(private db: AngularFirestore,
@@ -85,8 +87,8 @@ export class FirestoreProvider {
     this.viagens.get();
     this.veiculos = this.db.collection<Veiculo>('veiculos');
     this.veiculos.get();
-    this.paradas = this.db.collection<Parada>('paradas');
-    this.paradas.get();
+    //this.paradas = this.db.collection<Parada>('paradas');
+    //this.paradas.get();
     this.pessoas = this.db.collection<Pessoa>('pessoas');
     this.pessoas.get();
   }
@@ -99,41 +101,49 @@ export class FirestoreProvider {
 
   async listVeiculos() {
     let veiculos = await this.veiculos.snapshotChanges()
-      .pipe(map(actions => actions.map<Veiculo>(doc=>{
+      .pipe(map(actions => actions.map<Veiculo>(doc => {
         return this.toVeiculo(doc.payload.doc);
       })));
-      return veiculos;
+    return veiculos;
+  }
+
+  async listVeiculosAtual() {
+    let veiculos = await this.veiculos.snapshotChanges()
+      .pipe(map(actions => actions.map<Veiculo>(doc => {
+        return this.toVeiculo(doc.payload.doc);
+      })));
+    return veiculos;
   }
 
   async listPessoas() {
     let pessoas = await this.pessoas.snapshotChanges()
-      .pipe(map(actions => actions.map<Pessoa>(doc=>{
+      .pipe(map(actions => actions.map<Pessoa>(doc => {
         return this.toPessoa(doc.payload.doc);
       })));
-      return pessoas;
+    return pessoas;
   }
 
-  listPessoasPorVeiculoStatus(veiculo:string,status:string) {
+  listPessoasPorVeiculoStatus(veiculo: string, status: any) {
     return this.db.collection<Pessoa>('pessoas', ref => {
-      let query = ref.where('onibus','==',veiculo)
-      return query.where('status','==',status);
+      let query = ref.where('onibus', '==', veiculo)
+      return query.where('status', '==', status);
     }).valueChanges();
   }
 
   getViagem(id: string) {
-    return this.viagens.doc(id).ref.get().then(doc=>{
+    return this.viagens.doc(id).ref.get().then(doc => {
       return this.toViagem(doc)
     })
   }
 
   getVeiculo(id: string) {
-    return this.veiculos.doc(id).ref.get().then(doc=>{
+    return this.veiculos.doc(id).ref.get().then(doc => {
       return this.toVeiculo(doc)
     })
   }
 
   getParada(path: string) {
-    return this.db.doc(path).ref.get().then(doc=>{
+    return this.db.doc(path).ref.get().then(doc => {
       return this.toParada(doc)
     })
   }
@@ -146,15 +156,8 @@ export class FirestoreProvider {
         if (result.size > 0) {
           var p: Pessoa = new Pessoa();
           const r = result.docs[0];
-          p.id = r.get('id');
-          p.nome = r.get('nome');
-          p.cpf = r.get('cpf');
-          p.rg = r.get('rg');
-          p.nascimento = r.get('nascimento');
-          p.unidade = r.get('unidade');
-          p.onibus = r.get('onibus');
-          p.status = r.get('status');
-          console.log('Encontrado', p)
+          p = this.toPessoa(r)
+          console.log('Encontrado',p)
           resolve(p)
         } else {
           reject('Código não localizado')
@@ -163,30 +166,28 @@ export class FirestoreProvider {
     })
   }
 
-  registrarMovimentacao(qrcode: string, veiculo: Veiculo) {
-    //Buscar o pessoa pelo codigo
-
-    //Incrementar a parada
-
-    //
+  findPessoaByNome(nome: string): Promise<Pessoa> {
+    //localiza a pessoa pelo qrcode
+    console.log('Buscando', nome);
+    return new Promise<Pessoa>((resolve, reject) => {
+      this.pessoas.ref.where('nome', '==', nome.trim()).get().then((result) => {
+        if (result.size > 0) {
+          var p: Pessoa = new Pessoa();
+          const r = result.docs[0];
+          p = this.toPessoa(r)
+          console.log('Encontrado',p)
+          resolve(p)
+        } else {
+          reject(nome + ' não foi localizado.')
+        }
+      })
+    })
   }
 
-  /* public getParadaAtual(veiculo: Veiculo): Observable<Parada> {
-    return this.db.doc<Parada>(veiculo.paradaAtual).snapshotChanges()
-      .pipe(map(doc => {
-        return doc.payload;
-      })).pipe(map(obj => {
-        var parada = obj.data();
-        parada.id = obj.id;
-        return parada;
-      }))
-  } */
-
   async criarParada(
-    endereco: string
+    lat, long: number
   ): Promise<Parada> {
     let p = new Parada();
-    p.endereco = endereco;
     p.inicio = new Date();
     p.id = this.db.createId();
     p.ativa = true;
@@ -194,14 +195,15 @@ export class FirestoreProvider {
     p.idViagem = this.global.Viagem.id;
     p.qtdEntrada = 0;
     p.qtdSaida = 0;
+    p.coordenadas = new firestore.GeoPoint(lat, long);
     return new Promise<Parada>((resolve, reject) => {
-      this.paradas.doc(p.id).set(Object.assign({}, p));
+      this.db.doc(`paradas/${p.id}`).set(Object.assign({}, p));
       console.log('Inserindo a parada', p)
       const docRef = this.db.doc(`paradas/${p.id}`).ref;
       console.log('Obtendo a referência', docRef)
       this.db.doc(`veiculos/${this.global.Veiculo.id}`)
-        .update({ paradaAtual: docRef, emParada: true }).then(value=>{
-          console.log('Veiculo atualizado com as informações da parada',value)
+        .update({ paradaAtual: docRef, emParada: true }).then(value => {
+          console.log('Veiculo atualizado com as informações da parada', value)
         })
         .catch(erro => {
           console.log(erro)
@@ -230,33 +232,29 @@ export class FirestoreProvider {
   incSaida(pessoaId: string) {
     this.global.Veiculo.paradaAtual.qtdSaida++;
     this.setQtdSaida(this.global.Veiculo.paradaAtual.qtdSaida, this.global.Veiculo.paradaAtual.id);
-    this.pessoas.doc(pessoaId).update({status: StatusPessoa.Desembarque})
+    this.pessoas.doc(pessoaId).update({ status: StatusPessoa.Desembarque })
   }
 
   incEntrada(pessoaId: string) {
     this.global.Veiculo.paradaAtual.qtdEntrada++;
     this.setQtdEntrada(this.global.Veiculo.paradaAtual.qtdEntrada, this.global.Veiculo.paradaAtual.id);
-    this.pessoas.doc(pessoaId).update({status: StatusPessoa.Embarque})
+    this.pessoas.doc(pessoaId).update({ status: StatusPessoa.Embarque })
   }
 
   private setQtdEntrada(qtd: number, id: string) {
-    console.log('Ajustando qtdEntrada',qtd)
-    this.paradas.doc(id).update({ qtdEntrada: qtd });
+    console.log('Ajustando qtdEntrada', qtd, id)
+    this.db.doc(`paradas/${id}`).update({ qtdEntrada: qtd });
   }
 
   private setQtdSaida(qtd: number, id: string) {
-    console.log('Ajustando qtdSaida',qtd)
-    this.paradas.doc(id).update({ qtdSaida: qtd });
-  }
-
-  private setStatusPessoa(pessoaId: string, status: StatusPessoa) {
-    this.pessoas.doc(pessoaId).update({ status: status })
+    console.log('Ajustando qtdSaida', qtd, id)
+    this.db.doc(`paradas/${id}`).update({ qtdSaida: qtd });
   }
 
   public load() {
-    return new Promise((resolve, reject)=>{
-      this.carregaVeiculo().then(()=>{
-        this.carregaViagem().then(()=>{
+    return new Promise((resolve, reject) => {
+      this.carregaVeiculo().then(() => {
+        this.carregaViagem().then(() => {
           resolve(true)
         })
       });
@@ -264,24 +262,24 @@ export class FirestoreProvider {
   }
 
   private carregaVeiculo() {
-    return this.localStorage.get('veiculoId').then((veiculoId:string)=>{
-      console.log('Obtendo veiculo do store local',veiculoId)
-      if (veiculoId){
-        return this.getVeiculo(veiculoId).then(veiculo=>{
+    return this.localStorage.get('veiculoId').then((veiculoId: string) => {
+      console.log('Obtendo veiculo do store local', veiculoId)
+      if (veiculoId) {
+        return this.getVeiculo(veiculoId).then(veiculo => {
           this.global.Veiculo = veiculo;
-          console.log('Obtendo veiculo do firebase',veiculo)
+          console.log('Obtendo veiculo do firebase', veiculo)
         });
       }
     });
   }
 
   private carregaViagem() {
-    return this.localStorage.get('viagemId').then((viagemId:string)=>{
-      console.log('Obtendo viagem do store local',viagemId)
+    return this.localStorage.get('viagemId').then((viagemId: string) => {
+      console.log('Obtendo viagem do store local', viagemId)
       if (viagemId) {
-        return this.getViagem(viagemId).then(viagem=>{
+        return this.getViagem(viagemId).then(viagem => {
           this.global.Viagem = viagem;
-          console.log('Obtendo viagem do firebase',viagem)
+          console.log('Obtendo viagem do firebase', viagem)
         })
       }
     })

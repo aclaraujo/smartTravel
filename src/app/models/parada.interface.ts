@@ -1,4 +1,5 @@
 import * as firebase from 'firebase/app';
+import { Coordinates } from '@ionic-native/geolocation';
 
 export class Parada {
 
@@ -12,5 +13,6 @@ export class Parada {
     idVeiculo: string;
     qtdEntrada: number = 0;
     qtdSaida: number = 0;
+    coordenadas: firebase.firestore.GeoPoint
 
 }

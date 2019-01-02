@@ -1,5 +1,6 @@
+import { Geolocation } from '@ionic-native/geolocation';
 import { ModalComponent } from './../pages/captura/modal.component';
-import { ConsultaPage } from './../pages/consulta/consulta';
+import { ConsultaPage, DetalheModal } from './../pages/consulta/consulta';
 import { FirestoreProvider } from './../providers/firestore/firestore';
 import { TabsPage } from './../pages/tabs/tabs';
 import { MovimentoPage } from './../pages/movimento/movimento';
@@ -31,7 +32,8 @@ import { IonicStorageModule } from '@ionic/storage';
     MovimentoPage,
     TabsPage,
     ConsultaPage,
-    ModalComponent
+    ModalComponent,
+    DetalheModal
   ],
   imports: [
     BrowserModule,
@@ -51,7 +53,8 @@ import { IonicStorageModule } from '@ionic/storage';
     MovimentoPage,
     TabsPage,
     ConsultaPage,
-    ModalComponent
+    ModalComponent,
+    DetalheModal
   ],
   providers: [
     StatusBar,
@@ -61,7 +64,8 @@ import { IonicStorageModule } from '@ionic/storage';
     QRScanner,
     GlobalProvider,
     FirestoreProvider,
-    { provide: APP_INITIALIZER, useFactory: firestoreProviderFactory, deps: [FirestoreProvider], multi: true }
+    { provide: APP_INITIALIZER, useFactory: firestoreProviderFactory, deps: [FirestoreProvider], multi: true },
+    Geolocation
   ]
 })
 export class AppModule {}

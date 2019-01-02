@@ -2,6 +2,7 @@ import { FirestoreProvider } from './../../providers/firestore/firestore';
 import { GlobalProvider } from './../../providers/global/global';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ModalController, AlertController } from 'ionic-angular';
+import { Geolocation } from '@ionic-native/geolocation';
 
 /**
  * Generated class for the MovimentoPage page.
@@ -25,7 +26,8 @@ export class MovimentoPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public global: GlobalProvider,
     private firestore: FirestoreProvider,
-    private alertCtrl: AlertController) {
+    private alertCtrl: AlertController,
+    private geo: Geolocation) {
   }
 
   ionViewDidEnter() {
@@ -41,7 +43,13 @@ export class MovimentoPage {
   }
 
   async iniciar() {
-    await this.firestore.criarParada("Local 1");
+    this.geo.getCurrentPosition().then((position)=>{
+      const latlong=position.coords
+      this.firestore.criarParada(latlong.latitude, latlong.longitude);
+    },(reject)=>{
+      this.firestore.criarParada(0,0);
+    })
+    
   }
 
   encerrar() {
